@@ -1,7 +1,7 @@
 femtowiki
 =========
 
-[Femtowiki](http://www.goodoldweb.com) is a tiny wiki written in golang. It allows users to create pages using markdown.
+[Femtowiki](http://www.goodoldweb.com/femtowiki/) is a tiny wiki written in golang. It allows users to create pages using markdown.
 The wiki few dependencies and uses very little javascript.
 Try the latest version hosted [here](https://wiki.goodoldweb.com). Please contact [info@goodoldweb.com](mailto:info@goodoldweb.com)
 if you have any questions or want support.
@@ -58,6 +58,12 @@ Options
 To use postgres, run `./femtowiki -dbdriver postgres -dsn postgres://pguser:pgpasswd@localhost/dbname`
 
 To save an sqlite db at a different location, run `./femtowiki -dsn path/to/mywiki.db`.
+
+- `-usei2p=<bool>`: Use `./femtowiki -usei2p=true` to forward the service to i2p.
+- `-i2pini file`: Use `./femtowiki -i2pini contrib/tunnels.femtowiki.conf` to configure an i2p service with an ini-like file.
+
+When using i2p, the listening port will be set by the i2p configuration, and
+arguments passed to -addr will be canceled out.
 
 Commands
 --------

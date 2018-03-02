@@ -5,17 +5,18 @@
 package main
 
 import (
-	"fmt"
-	"golang.org/x/crypto/ssh/terminal"
-	"syscall"
 	"flag"
-	"log"
-	"github.com/s-gv/femtowiki/models/db"
-	"net/http"
+	"fmt"
+    "github.com/eyedeekay/sam-forwarder/config"
 	"github.com/s-gv/femtowiki/models"
-	"net/http/fcgi"
-	"time"
+	"github.com/s-gv/femtowiki/models/db"
 	"github.com/s-gv/femtowiki/views"
+	"golang.org/x/crypto/ssh/terminal"
+	"log"
+	"net/http"
+	"net/http/fcgi"
+	"syscall"
+	"time"
 )
 
 func getCreds() (string, string) {
@@ -64,8 +65,21 @@ func main() {
 	changePasswd := flag.Bool("changepasswd", false, "Change password")
 	deleteSessions := flag.Bool("deletesessions", false, "Delete all sessions (logout all users)")
 	fcgiMode := flag.Bool("fcgi", false, "Fast CGI rather than listening on a port")
+    usei2p := flag.Bool("usei2p", false, "Forward the service to the i2p network as an eepSite")
+	i2pconf := flag.String("i2pini", "./contrib/tunnels.femtowiki.conf", "i2p tunnel configuration file to use")
 
 	flag.Parse()
+
+    if *usei2p {
+		if i2pforwarder, i2perr := i2ptunconf.NewSAMForwarderFromConfig(*i2pconf, "127.0.0.1", "7656"); i2perr != nil {
+			fmt.Printf("Error creating i2p tunnel from config, %s", i2perr.Error())
+			return
+		} else {
+			*addr = i2pforwarder.Target()
+			fmt.Printf("Serving eepSite on, %s", i2pforwarder.Base32())
+			go i2pforwarder.Serve()
+		}
+	}
 
 	db.Init(*dbDriver, *dsn)
 
@@ -181,8 +195,8 @@ func main() {
 	}
 
 	srv := &http.Server{
-		Handler: mux,
-		Addr: *addr,
+		Handler:      mux,
+		Addr:         *addr,
 		WriteTimeout: 30 * time.Second,
 		ReadTimeout:  30 * time.Second,
 		IdleTimeout:  120 * time.Second,
