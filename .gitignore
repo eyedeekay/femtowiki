@@ -15,3 +15,6 @@
 
 .idea/
 femtowiki*
+Makefile
+bin
+.go
