@@ -2,7 +2,7 @@ FROM alpine:edge
 ENV args=args
 # Setup distro and user
 RUN apk update && apk upgrade
-RUN apk add go git ca-certificates musl-dev sqlite3
+RUN apk add go git ca-certificates musl-dev sqlite
 RUN mkdir -p /opt/femtowiki
 RUN adduser -h /opt/femtowiki -g 'femtowiki,,,,' -D femtowiki
 
